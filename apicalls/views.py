@@ -3,6 +3,9 @@ import datetime
 import requests
 from django.views.generic import TemplateView
 
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.cache import cache_page
+
 BASE_URL = 'https://httpbin.org/'
 
 
