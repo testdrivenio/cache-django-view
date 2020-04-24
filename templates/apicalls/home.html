@@ -9,18 +9,13 @@
 </head>
 <body>
 <div class="container">
-    <div>
+    <div class="pt-3">
         <h1>Below is the result of the APICall</h1>
     </div>
     <div class="pt-3 pb-3">
         <a href="{% url 'api_results' %}">
             <button type="button" class="btn btn-success">
-                Get new data (cached)
-            </button>
-        </a>
-        <a href="{% url 'api_results_uncached' %}">
-            <button type="button" class="btn btn-danger">
-                Get new data (uncached)
+                Get new data
             </button>
         </a>
     </div>

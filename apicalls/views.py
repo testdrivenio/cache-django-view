@@ -6,7 +6,6 @@ from django.views.generic import TemplateView
 BASE_URL = 'https://httpbin.org/'
 
 
-# @method_decorator(cache_page(60 * 5), name='dispatch')
 class ApiCalls(TemplateView):
     template_name = 'apicalls/home.html'
 
