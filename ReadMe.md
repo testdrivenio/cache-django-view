@@ -117,9 +117,9 @@ cache.set("my_key", "The cached value", 60)
 
 This creates the key `my_key` (in `django.core.cache.caches`) with the value `The cached value`, and a timeout of 1 minute.
 
-## Implement caching of a view in you Django app
+## Implement caching of a view in Django
 
-In the sample project for this article, we have a view that calls an external API. It takes 2 seconds to get the response. This is setup to use `requests` and call sampe API at [http://httpbin.org](http://httpbin.org). We're calling the `delay` function with a parameter of 2 (seconds).
+In the sample project for this article, we have a view that calls an external API. It takes 2 seconds to get the response. This is setup by using `requests` to call a sampe API at [http://httpbin.org](http://httpbin.org). We're calling the `delay` function with a parameter of 2 (seconds).
 
 To have a look at how it currently works, run:
 
@@ -157,10 +157,10 @@ CACHES = {
 }
 ```
 
-We're telling Django to use the `django.core.cache.backends.memcached.MemcachedCache` backend, and telling it that Memcached is running on our local machine on port 11211.
+We're telling Django to use the `django.core.cache.backends.memcached.MemcachedCache` backend, and declaring that Memcached should run on our local machine on port 11211.
 
 ### Caching the view
-Now let's look at our view at `apicalls/views`
+Next let's look at our view at `apicalls/views`
 
 ```python
 import datetime
@@ -184,7 +184,7 @@ class ApiCalls(TemplateView):
         return context
 ```
 
-We have a simple `TemplateView` that makes a sample API request that takes 2 seconds to return a response. To cache this view all we have to do is to import `chace_page` from `django.views.decorators.cache`, and decorate our view with the `@cache_page` decorator.
+We have a simple `TemplateView` that makes a sample API request that takes 2 seconds to return a response. To cache this view, all we have to do is to import `chace_page` from `django.views.decorators.cache`, and decorate our view with the `@cache_page` decorator. Edit the `views.py` file to look like this.
 
 ```python
 import datetime
@@ -213,9 +213,9 @@ class ApiCalls(TemplateView):
 
 Since we're using a classed based view in this example, we can't put the decorator directly on the class. An option is to put it on an overridden `dispatch` method, or as we do here, use the `method_decorator` and specify `dispatch` (as the method to be decorated) for the name argument.
 
-The cache in this example sets a timeout of 5 minutes on the cache.
+The cache in this example sets a timeout of 5 minutes for the cache.
 
-If we now go to [http://127.0.0.1:8000](http://127.0.0.1:8000) in our browser, the first request will take 2 seconds. If we then press the "Get new data button", we get the results instantly. Also now we see that the time on the page stays the same.
+If we now go to [http://127.0.0.1:8000](http://127.0.0.1:8000) in our browser, the first request will take 2 seconds. If we then press the "Get new data button", we get the results instantly. Also now we see that the time on the page stays the same between each load.
 
 As an option to use the decorator in `apicalls/views.py` we can apply the caching in `apicalls/urls.py`. Remove the three lines of code we added to views and edit the `apicalls/urls.py` to look like this.
 
@@ -226,9 +226,10 @@ from django.views.decorators.cache import cache_page # NEW
 from .views import ApiCalls
 
 urlpatterns = [
-    path('', cache_page(60 * 15)(ApiCalls.as_view()), name='api_results'), # UPDATED
+    path('', cache_page(60 * 5)(ApiCalls.as_view()), name='api_results'), # UPDATED
 ]
 ```
+Here we are decorating the `as_view` method of our ApiCalls view with `cache_page` and are setting the timeout to 5 minutes.
 
 To make it easier to demonstrate the difference between our chached view, and the uncached view, add a new path to `apicalls/urls.py`.
 
@@ -248,9 +249,9 @@ Also add new button after the existing button in `templates/apicalls/home.html`.
 
 ```html
  <a href="{% url 'api_results_uncached' %}">
-            <button type="button" class="btn btn-danger">
-                Get new data (uncached)
-            </button>
+    <button type="button" class="btn btn-danger">
+        Get new data (uncached)
+    </button>
  </a>
 ```
 
@@ -264,7 +265,7 @@ If we now go to [http://127.0.0.1:8000](http://127.0.0.1:8000) in our browser, w
 
 ## Conclusion
 
-In this article we talked about the different built-in options in Django for caching. We also guided you step by step how to set up a cache on a view. First by using a decorator on the view, and then how to do it directly in the URLConf.
+In this article we talked about the different built-in options in Django for caching, as well as the different level of caching available. We also guided you step by step how to set up a cache on a view. First by using a decorator on the view, and then how to do it directly in the URLConf.
 
 Looking for more?
 
