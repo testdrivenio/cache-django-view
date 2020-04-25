@@ -24,18 +24,53 @@ By the end of this tutorial, you should be able to:
 
 ## Project Setup
 
-Clone from GitHub
+Clone down the base project from the cache-django-view repo, and then check out the base branch:
+
+``` 
+$ git clone https://github.com/testdrivenio/cache-django-view.git --branch base --single-branch
+$ cd cache-django-view
+```
+
+Create a virtual environment and install the requirements:
+
+```
+$ python -m venv venv
+$ python -m pip install -r requirements.txt
+```
+
+Do the Django migration, and start the server:
+
+```
+$ python manage.py migrate
+$ python manage.py runserver 
+```
+
+Go to [http://127.0.0.1:8000](http://127.0.0.1:8000) to see that everything works. We should get a web page with the title "Below is the result of the APICall".
 
 
 ## Types of caching built in in Django
 
 Django comes with several built-in cache backends, as well as options for custom backends. The built in options is:
 
-- Memcached (which we'll use in this article)
-- Database
-- File system
-- Local memory
-- Dummy
+**Memcached (which we'll use in this article)**
+
+Memcached is an entirely memory-based key-value store for small chunks of data. It has the ability to share a cache over multiple servers.
+
+**Database**
+
+Here the cache fragments is stored in a database. A table for that purpose can created with one of the django-admin commands.
+
+**File system**
+
+Saves the cache in separate files for each cache value.
+
+**Local memory**
+
+A local memory chache best suited for development enviroment.
+
+**Dummy**
+
+A "dummy" cache that doesn't cache anything, and just implements the cache interface. Meant to be used in development when you don't want caching, but do not wish to change the code.
 
 ## Different levels of caching in Django
 
@@ -47,7 +82,7 @@ Caching in Django can be implemented on different levels. For example you can ca
 
 ### Per-view cache
 
-This is what we'll use in this article. It sets up a cache for a certain view. It depends on which URL is accessing the view. For example in a detail view, `object/1` will be cached separately from `object/2`. The per-view cache can be configured by a decorator on the view method, or directly on a path in the URLConf.
+This is what we'll use in this article. It sets up a cache for a certain view. It depends on which URL is accessing the view. For example in a detail view, `object/1` will be cached separately from `object/2`. The per-view cache can be configured by using a decorator on the view method, or directly on a path in the URLConf.
 
 ### Template fragment caching
 
@@ -64,7 +99,7 @@ Here we first use `{% load cache %}` to be able to access the cache tag. The cac
 
 ### Low-level cache API
 
-For cases where the previous options don't give enough granularity, we can use the low-level API. We can use the mothods of `django.core.cache` and its different methods to control our caches in detail. Examples of cache methods:
+For cases where the previous options don't give enough granularity, we can use the low-level API. We can use the methods of `django.core.cache` and its different methods to control our caches in detail. Examples of cache methods:
 
 - cache.get
 - cache.set
@@ -84,7 +119,7 @@ This creates the key `my_key` (in `django.core.cache.caches`) with the value `Th
 
 ## Implement caching of a view in you Django app
 
-In the sample project for this article, we have a view that calls an external API. It takes 2 seconds to get the response. We have setup this to use `requests` and call sampe API at [http://httpbin.org](http://httpbin.org). We're calling the `delay` function with a parameter of 2 (seconds).
+In the sample project for this article, we have a view that calls an external API. It takes 2 seconds to get the response. This is setup to use `requests` and call sampe API at [http://httpbin.org](http://httpbin.org). We're calling the `delay` function with a parameter of 2 (seconds).
 
 To have a look at how it currently works, run:
 
@@ -94,7 +129,6 @@ Then go to [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser, it sh
 
 We will use the Memcached option in this article to implement caching of a view. To do this we first need to add the `python-memcached` to our dependencies. 
 
-< describe how to set up a virtual environment here, or just mention that it is assumed the user has done this? >
 
 ### Setting up requirements
 
@@ -108,7 +142,7 @@ python-memcached==1.59
 
 Update the virtual environment.
 
-`$ pip install -r requirement.txt`
+`$ python -m pip install -r requirements.txt`
 
 ### Declaring our backend
 
@@ -181,9 +215,9 @@ Since we're using a classed based view in this example, we can't put the decorat
 
 The cache in this example sets a timeout of 5 minutes on the cache.
 
-If we now go to [http://127.0.0.1:8000](http://127.0.0.1:8000) in our browser, the first request will take 2 seconds. If we then press the "Get new data button", we get the results instantly.
+If we now go to [http://127.0.0.1:8000](http://127.0.0.1:8000) in our browser, the first request will take 2 seconds. If we then press the "Get new data button", we get the results instantly. Also now we see that the time on the page stays the same.
 
-As an option to use the decorator in `apicalls/views.py` we can apply the caching in `apicalls/urls.py`. Remove the three lines of code we added to views and edit the `urls.py` to look like this.
+As an option to use the decorator in `apicalls/views.py` we can apply the caching in `apicalls/urls.py`. Remove the three lines of code we added to views and edit the `apicalls/urls.py` to look like this.
 
 ```python
 from django.urls import path
@@ -220,7 +254,13 @@ Also add new button after the existing button in `templates/apicalls/home.html`.
  </a>
 ```
 
-< more to come in this section >
+Restart the Django server by first stopping it with `CTRL-C` in the terminal where it is started, and then run:
+
+```
+$ python manage.py runserver
+```
+If we now go to [http://127.0.0.1:8000](http://127.0.0.1:8000) in our browser, we should see two buttons. The green button reloads the cached page, and the red loads the unchached page (takes 2 seconds). We can also see that the time updates when pressing the red button, but pressing the green button should give a previous time when the cache was saved.
+
 
 ## Conclusion
 
