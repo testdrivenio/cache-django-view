@@ -3,6 +3,7 @@ import datetime
 import requests
 from django.views.generic import TemplateView
 
+
 BASE_URL = 'https://httpbin.org/'
 
 
@@ -11,7 +12,6 @@ class ApiCalls(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # request will have response after 2 seconds
         response = requests.get(f'{BASE_URL}/delay/2')
         response.raise_for_status()
         context['content'] = 'Results received!'
