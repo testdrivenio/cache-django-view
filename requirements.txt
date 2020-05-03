@@ -1,3 +1,0 @@
-Django==3.0.5
-requests==2.23.0
-django-debug-toolbar==2.2

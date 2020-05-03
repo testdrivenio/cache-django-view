@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="container">
+    <div class="pt-3">
+        <h1>Below is the result of the APICall</h1>
+    </div>
+    <div class="pt-3 pb-3">
+        <a href="{% url 'api_results' %}">
+            <button type="button" class="btn btn-success">
+                Get new data
+            </button>
+        </a>
+    </div>
+    {{ content }}<br>
+    {{ current_time|time:"H:i:s" }}
+</div>
+</body>
+</html>
