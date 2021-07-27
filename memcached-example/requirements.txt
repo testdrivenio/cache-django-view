@@ -1,5 +1,4 @@
-Django==3.0.5
-django-debug-toolbar==2.2
-gunicorn==20.0.4
-requests==2.23.0
-python-memcached==1.59
+Django==3.2.5
+django-debug-toolbar==3.2.1
+pymemcache==3.5.0
+requests==2.26.0
